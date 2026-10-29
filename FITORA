@@ -1,0 +1,25 @@
+#!/bin/sh
+# Mac / Linux: run with  sh publish-to-github.sh
+# Needs: git installed. Easiest: also install GitHub CLI (gh) and run "gh auth login" once.
+
+REPO_NAME="fitora"
+
+if [ -f .env.local ]; then echo "Note: .env.local exists but is ignored by git. Good."; fi
+
+git init
+git add .
+git commit -m "First version of $REPO_NAME"
+git branch -M main
+
+if command -v gh >/dev/null 2>&1; then
+  gh repo create "$REPO_NAME" --private --source=. --remote=origin --push
+else
+  echo ""
+  echo "GitHub CLI not found. Do this instead:"
+  echo "1. Open github.com/new, name it $REPO_NAME, choose Private, do NOT add README, click Create."
+  echo "2. Copy the repo URL (like https://github.com/YOURNAME/$REPO_NAME.git)"
+  printf "Paste the URL here: "
+  read URL
+  git remote add origin "$URL"
+  git push -u origin main
+fi
